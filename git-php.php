@@ -205,11 +205,11 @@ EOT;
  </tr>
  <tr>
   <td class="sub">Reading the PHP source</td>
-  <td><a href="http://doc.php.net/tutorial/">Maintaining the documentation</a></td>
+  <td><a href="https://doc.php.net/guide/">Maintaining the documentation</a></td>
  </tr>
  <tr>
   <td class="sub">Using PHP extensions</td>
-  <td><a href="http://doc.php.net/tutorial/">Translating the documentation</a></td>
+  <td><a href="https://doc.php.net/guide/">Translating the documentation</a></td>
  </tr>
  <tr>
   <td class="sub">Creating experimental PHP extensions</td>
@@ -234,7 +234,7 @@ EOT;
  If you are contributing a patch, a small fix, or another minor change you do
  not need to ask for a Git account before submitting it. Fork our
  <a href="https://github.com/php/php-src">GitHub repository</a> and create a
- <a href="http://help.github.com/send-pull-requests/">pull request</a>, attach
+ <a href="https://docs.github.com/en/pull-requests">pull request</a>, attach
  a patch to a
  <a href="https://bugs.php.net/">bug report or feature request</a>,
  or send your patch to
@@ -259,7 +259,7 @@ EOT;
  Similarly, if you plan on contributing documentation, you should
  <a href="mailto:phpdoc-subscribe@lists.php.net">subscribe to the
  documentation mailing list</a>, and read the
- <a href="http://doc.php.net/tutorial/">PHP Documentation HOWTO</a>.
+ <a href="https://doc.php.net/guide/">PHP Documentation contribution guide</a>.
 </p>
 
 <p>

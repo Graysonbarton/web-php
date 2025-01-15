@@ -9,9 +9,11 @@
 
 */
 
+use phpweb\I18n\Languages;
+use phpweb\UserPreferences;
+
 // Ensure that our environment is set up
 include_once __DIR__ . '/include/prepend.inc';
-include_once __DIR__ . '/include/languages.inc';
 include_once __DIR__ . '/include/errors.inc';
 
 // Get URI for this request, strip leading slash
@@ -77,7 +79,7 @@ if (preg_match("!(.*\\.php)3$!", $URI, $array)) {
 //     default language manual accessibility on mirror sites through /manual/filename)
 // @todo do we rely on this? how about removing it...
 if (preg_match("!^manual/([^/]*)$!", $URI, $array)) {
-    if (!isset($INACTIVE_ONLINE_LANGUAGES[$array[1]])) {
+    if (!isset(Languages::INACTIVE_ONLINE_LANGUAGES[$array[1]])) {
         mirror_redirect("/manual/$LANG/$array[1]");
     }
 } elseif (preg_match("!^manual/html/([^/]+)$!", $URI, $array)) {
@@ -175,6 +177,12 @@ if (preg_match('/^GH-(\d+)$/', $URI, $matches)) {
     mirror_redirect("https://github.com/php/php-src/issues/" . $matches[1]);
 }
 
+// php.net/supported-versions.PHP -> supported-versions.php
+if ($URI == 'supported-versions.PHP') {
+    mirror_redirect("https://www.php.net/supported-versions.php");
+}
+
+
 // ============================================================================
 // Redirect if the entered URI was a PHP page name (except some pages,
 // which we display in the mirror's language or the explicitly specified
@@ -249,6 +257,15 @@ $manual_page_moves = [
     // Refactored
     'regexp.reference' => 'regexp.introduction',
     "security" => "manual/security",
+
+    // MongoDB converted from set to book
+    'set.mongodb' => 'book.mongodb',
+    'mongodb.installation.homebrew' => 'mongodb.installation#mongodb.installation.homebrew',
+    'mongodb.installation.manual' => 'mongodb.installation#mongodb.installation.manual',
+    'mongodb.installation.pecl' => 'mongodb.installation#mongodb.installation.pecl',
+    'mongodb.installation.windows' => 'mongodb.installation#mongodb.installation.windows',
+    'mongodb.persistence.deserialization' => 'mongodb.persistence#mongodb.persistence.deserialization',
+    'mongodb.persistence.serialization' => 'mongodb.persistence#mongodb.persistence.serialization',
 ];
 
 if (isset($manual_page_moves[$URI])) {
@@ -257,7 +274,13 @@ if (isset($manual_page_moves[$URI])) {
 } elseif (preg_match("!^manual/([^/]+)/([^/]+).php$!", $URI, $match) &&
           isset($manual_page_moves[$match[2]])) {
     status_header(301);
-    mirror_redirect("/manual/$match[1]/" . $manual_page_moves[$match[2]] . ".php");
+
+    $parts = explode('#', $manual_page_moves[$match[2]], 2);
+    if (count($parts) === 1) {
+        mirror_redirect("/manual/{$match[1]}/{$parts[0]}.php");
+    } else {
+        mirror_redirect("/manual/{$match[1]}/{$parts[0]}.php#{$parts[1]}");
+    }
 }
 
 $manual_redirections = [
@@ -347,7 +370,7 @@ $uri_aliases = [
     "gd" => "image",
     "bcmath" => "bc",
     'streams' => 'book.stream',
-    "mongodb" => "set.mongodb",
+    "mongodb" => "book.mongodb",
     "hrtime" => "function.hrtime", // Prefer function over PECL ext
 
     "callback" => "language.pseudo-types",
@@ -400,7 +423,6 @@ $uri_aliases = [
     "links" => "support", // BC
     "links.php" => "support", // BC
     "oracle" => "oci8",
-    "_" => "function.gettext",
     "cli" => "features.commandline",
 
     "oop" => "language.oop5",
@@ -529,8 +551,8 @@ $external_redirects = [
     "pear" => "http://pear.php.net/",
     "bugs" => "https://bugs.php.net/",
     "bugstats" => "https://bugs.php.net/stats.php",
-    "phpdochowto" => "http://doc.php.net/tutorial/",
-    "rev" => "http://doc.php.net/revcheck.php?p=graph&lang=$LANG",
+    "phpdochowto" => "https://doc.php.net/guide/",
+    "rev" => "https://doc.php.net/revcheck.php?p=graph&lang=$LANG",
     "release/5_3_0.php" => "/releases/5_3_0.php", // PHP 5.3.0 release announcement had a typo
     "ideas.php" => "http://wiki.php.net/ideas", // BC
     "releases.atom" => "/releases/feed.php", // BC, No need to pre-generate it
@@ -689,10 +711,10 @@ if (preg_match("!^manual/(.+)/function\.(.+)-(.+).php$!", $URI, $array)) {
 // ============================================================================
 // For manual pages for inactive languages, point visitors to the English page
 if (preg_match("!^manual/([^/]+)/([^/]+).php$!", $URI, $match) &&
-    isset($INACTIVE_ONLINE_LANGUAGES[$match[1]])) {
+    isset(Languages::INACTIVE_ONLINE_LANGUAGES[$match[1]])) {
     $try = find_manual_page("en", $match[2]);
     if ($try) {
-        error_inactive_manual_page($INACTIVE_ONLINE_LANGUAGES[$match[1]], $try);
+        error_inactive_manual_page(Languages::INACTIVE_ONLINE_LANGUAGES[$match[1]], $try);
     }
 }
 
@@ -709,7 +731,7 @@ if (strpos($URI, "manual/") === 0) {
 // ============================================================================
 // If no match was found till this point, the last action is to start a
 // search with the URI the user typed in
-$fallback = (myphpnet_urlsearch() === MYPHPNET_URL_MANUAL ? "404manual" : "404quickref");
+$fallback = ($userPreferences->searchType === UserPreferences::URL_MANUAL ? "404manual" : "404quickref");
 mirror_redirect(
     '/search.php?show=' . $fallback . '&lang=' . urlencode($LANG) .
     '&pattern=' . substr($_SERVER['REQUEST_URI'], 1),

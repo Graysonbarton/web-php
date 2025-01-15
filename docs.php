@@ -1,4 +1,7 @@
 <?php
+
+use phpweb\I18n\Languages;
+
 $_SERVER['BASE_PAGE'] = 'docs.php';
 include_once __DIR__ . '/include/prepend.inc';
 
@@ -17,8 +20,8 @@ site_header("Documentation", ["current" => "docs"]);
 <p>
  Note, that many languages are just under translation, and
  the untranslated parts are still in English. Also some translated
- parts might be outdated. The translation teams are open to
- contributions.
+ parts might be outdated. The translation teams are
+ <a href="https://doc.php.net/">open to contributions</a>.
 </p>
 </div>
 
@@ -27,23 +30,30 @@ site_header("Documentation", ["current" => "docs"]);
 <?php
 
 // List all manual languages viewable online
-$lastlang = end($ACTIVE_ONLINE_LANGUAGES);
-foreach ($ACTIVE_ONLINE_LANGUAGES as $langcode => $langname) {
+$lastlang = array_key_last(Languages::ACTIVE_ONLINE_LANGUAGES);
+foreach (Languages::ACTIVE_ONLINE_LANGUAGES as $langcode => $langname) {
     if (!file_exists($_SERVER["DOCUMENT_ROOT"] . "/manual/{$langcode}/index.php")) {
         continue;
     }
 
     // Make preferred language bold
-    if ($langcode == $LANG) { echo "<strong>"; }
+    if ($langcode === $LANG) { echo "<strong>"; }
 
     echo '<a href="/manual/' . $langcode . '/">' . $langname . '</a>';
-    echo ($lastlang != $langname) ? ",\n" : "\n";
+    echo ($lastlang !== $langcode) ? ",\n" : "\n";
 
-    if ($langcode == $LANG) { echo "</strong>"; }
+    if ($langcode === $LANG) { echo "</strong>"; }
 }
 
 ?>
 </p>
+
+<p>
+ The language currently being used as the default for you should be in
+ <strong>bold</strong> above. You can change the setting for this on the
+ <a href="/my.php">My PHP.net customization page</a>.
+</p>
+
 <p>
  For downloadable formats, please visit our
  <a href="download-docs.php">documentation downloads</a> page.
@@ -58,11 +68,7 @@ foreach ($ACTIVE_ONLINE_LANGUAGES as $langcode => $langname) {
 <ul class="content-box listed">
  <li>
   If you are interested in how the documentation is edited and translated,
-  you should read the <a href="http://doc.php.net/tutorial/">Documentation HOWTO</a>.
- </li>
- <li>
-  <a href="http://gtk.php.net/">PHP-GTK related documentation</a>
-  is hosted on the PHP-GTK website.
+  you should read the <a href="https://doc.php.net/guide/">contribution guide</a>.
  </li>
  <li>
   <a href="http://pear.php.net/manual/">Documentation of PEAR and the various

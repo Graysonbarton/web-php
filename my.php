@@ -1,4 +1,8 @@
 <?php
+
+use phpweb\I18n\Languages;
+use phpweb\UserPreferences;
+
 $_SERVER['BASE_PAGE'] = 'my.php';
 include_once __DIR__ . '/include/prepend.inc';
 
@@ -6,14 +10,14 @@ include_once __DIR__ . '/include/prepend.inc';
 header_nocache();
 
 // Languages array copy and options to list
-$langs = $ACTIVE_ONLINE_LANGUAGES;
+$langs = Languages::ACTIVE_ONLINE_LANGUAGES;
 $options = [];
 
 // We have post data, and it is an available language
 if (isset($_POST['my_lang'], $langs[$_POST['my_lang']])) {
 
     // Set the language preference
-    $MYPHPNET[0] = $_POST['my_lang'];
+    $userPreferences->languageCode = $_POST['my_lang'];
 
     // Add this as first option, selected
     $options[] = '<option value="' . $_POST['my_lang'] . '" selected>' .
@@ -24,14 +28,14 @@ if (isset($_POST['my_lang'], $langs[$_POST['my_lang']])) {
 }
 
 // We have received a cookie and it is an available language
-elseif (isset($langs[myphpnet_language()])) {
+elseif (isset($langs[$userPreferences->languageCode])) {
 
     // Add this as first option, selected
-    $options[] = '<option value="' . myphpnet_language() . '" selected>' .
-                 $langs[myphpnet_language()] . "</option>\n";
+    $options[] = '<option value="' . $userPreferences->languageCode . '" selected>' .
+                 $langs[$userPreferences->languageCode] . "</option>\n";
 
     // Remove, so it is not listed two times
-    unset($langs[myphpnet_language()]);
+    unset($langs[$userPreferences->languageCode]);
 }
 
 // We have no cookie and no form submitted
@@ -51,18 +55,18 @@ $langpref = "<select id=\"form-my_lang\" name=\"my_lang\">\n" .
 
 // Save URL shortcut fallback setting
 if (isset($_POST['urlsearch'])) {
-    myphpnet_urlsearch($_POST['urlsearch']);
+    $userPreferences->setUrlSearchType($_POST['urlsearch']);
 }
 
 if (isset($_POST["showug"])) {
-    myphpnet_showug($_POST["showug"] === "enable");
+    $userPreferences->setIsUserGroupTipsEnabled($_POST["showug"] === "enable");
 }
 
 // Prepare mirror array
 $mirror_sites = $MIRRORS;
 $mirror_sites["NONE"] = [7 => MIRROR_OK];
 
-myphpnet_save();
+$userPreferences->save();
 
 site_header("My PHP.net", ["current" => "community"]);
 ?>
@@ -94,9 +98,8 @@ site_header("My PHP.net", ["current" => "community"]);
  If you use a shortcut or search for a function, the language used
  is determined by checking for the following settings. The list is
  in priority order, the first is the most important. Normally you don't
- need to set your preferred language, as your last seen language is
- always remembered, and is a good estimate of your preferred language
- most of the time.
+ need to set your preferred language, as your browser's language preferences
+ are detected automatically using the Accept-Language header.
 </p>
 
 <div class="indent">
@@ -108,9 +111,6 @@ $langinfo = [
 
     "<label for=\"form-my_lang\">Your preferred language</label>" =>
     $langpref,
-
-    "Last seen language" =>
-    (isset($_COOKIE['LAST_LANG']) ? htmlentities($_COOKIE['LAST_LANG'], ENT_QUOTES | ENT_IGNORE, 'UTF-8') : "None"),
 
     "Your Accept-Language browser setting" =>
     (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? htmlentities($_SERVER['HTTP_ACCEPT_LANGUAGE'], ENT_QUOTES | ENT_IGNORE, 'UTF-8') : "None"),
@@ -146,25 +146,6 @@ foreach ($langinfo as $lin => $lid) {
  <a href="/docs.php">language selection</a> pages, etc.
 </p>
 
-<h2>Your country</h2>
-
-<p>
- The PHP.net site tries to detect your country
- using the <a href="http://www.directi.com/?site=ip-to-country">Directi
- Ip-to-Country Database</a>. This information is used to mark
- the events in your country specially.
-</p>
-
-<div class="indent">
-<?php
-if (i2c_valid_country()) {
-    echo "We detected that you are from <b>" . $COUNTRIES[$COUNTRY] . "</b>";
-} else {
-    echo "We were unable to detect your country";
-}
-?>
-</div>
-
 <h2>URL search fallback</h2>
 
 <p>
@@ -178,12 +159,12 @@ if (i2c_valid_country()) {
 <div class="indent">
  Your setting: <input id="form-urlsearch-quickref" type="radio" name="urlsearch" value="quickref"
 <?php
-$type = myphpnet_urlsearch();
-if ($type === MYPHPNET_URL_NONE || $type === MYPHPNET_URL_FUNC) {
+$type = $userPreferences->searchType;
+if ($type === UserPreferences::URL_NONE || $type === UserPreferences::URL_FUNC) {
     echo ' checked="checked"';
 }
 echo '> <label for="form-urlsearch-quickref">Function list search</label> <input id="form-urlsearch-manual" type="radio" name="urlsearch" value="manual"';
-if ($type === MYPHPNET_URL_MANUAL) {
+if ($type === UserPreferences::URL_MANUAL) {
     echo ' checked="checked"';
 }
 ?>
@@ -197,8 +178,8 @@ if ($type === MYPHPNET_URL_MANUAL) {
 We are experimenting with listing nearby user groups. This feature is highly experimental
 and will very likely change a lot and be broken at times.
 </p>
-<label for="showugenable">Enable UG tips</label> <input type="radio" name="showug" id="showugenable" value="enable" <?php echo myphpnet_showug() ? "checked=checked" : "" ?>><br>
-<label for="showugdisable">Disable UG tips</label> <input type="radio" name="showug" id="showugdisable" value="disable" <?php echo myphpnet_showug() ? "" : "checked=checked" ?>>
+<label for="showugenable">Enable UG tips</label> <input type="radio" name="showug" id="showugenable" value="enable" <?php echo $userPreferences->isUserGroupTipsEnabled ? "checked=checked" : "" ?>><br>
+<label for="showugdisable">Disable UG tips</label> <input type="radio" name="showug" id="showugdisable" value="disable" <?php echo $userPreferences->isUserGroupTipsEnabled ? "" : "checked=checked" ?>>
 
 <p class="center">
  <input type="submit" value="Set All Preferences">

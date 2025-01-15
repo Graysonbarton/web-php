@@ -1,4 +1,7 @@
 <?php
+
+use phpweb\I18n\Languages;
+
 $_SERVER['BASE_PAGE'] = 'manual/help-translate.php';
 include_once __DIR__ . '/../include/prepend.inc';
 include_once __DIR__ . '/../include/shared-manual.inc';
@@ -12,7 +15,7 @@ The PHP Manual has over 30 translations already setup, but due to inactivity man
 
 <h3>How to help translate the PHP Manual</h3>
 <p>
-If you're interested in helping translate a specific language, then please read the translation section of the <a href="http://doc.php.net/tutorial/">Guide for Manual Contributors</a> and contact the appropriate mailing list. Whether or not your language is shown below, you are very welcome to help translate the PHP Manual from English to another language.
+If you're interested in helping translate a specific language, then please read the translation section of the <a href="https://doc.php.net/guide/">Guide for Manual Contributors</a> and contact the appropriate mailing list. Whether or not your language is shown below, you are very welcome to help translate the PHP Manual from English to another language.
 </p>
 
 <h3>Using outdated translations</h3>
@@ -26,7 +29,7 @@ The following list of languages already contain SVN modules, and will show up on
 // $archived are manuals we have old versions of
 $archived = ['da', 'kr', 'pl', 'tw'];
 
-foreach ($INACTIVE_ONLINE_LANGUAGES as $cc => $lang) {
+foreach (Languages::INACTIVE_ONLINE_LANGUAGES as $cc => $lang) {
     $link = 'no archive';
     if (in_array($cc, $archived, true)) {
         $link = '<a href="http://docs.php.net/manual/' . $cc . '">archive</a>';

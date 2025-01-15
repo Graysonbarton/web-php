@@ -1,4 +1,8 @@
 <?php
+
+use phpweb\I18n\Languages;
+use phpweb\Navigation\NavItem;
+
 $_SERVER['STATIC_ROOT'] = $MYSITE;
 $_SERVER['MYSITE'] = $MYSITE;
 
@@ -422,23 +426,45 @@ EOT;
 
 function site_header(string $title = 'Hypertext Preprocessor', array $config = []): void
 {
-    global $MYSITE;
+    global $MYSITE, $LANG;
+
+    $meta_image_path = $MYSITE . 'images/meta-image.png';
+    $meta_description = "PHP is a popular general-purpose scripting language that powers everything from your blog to the most popular websites in the world.";
 
     $defaults = [
-        "lang" => myphpnet_language(),
+        "lang" => $LANG,
         "current" => "",
         "meta-navigation" => [],
         'classes' => '',
         'layout_span' => 9,
         "cache" => false,
         "headsup" => "",
+        'meta_tags' => <<<META
+<meta name="Description" content="{$meta_description}" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@official_php" />
+<meta name="twitter:title" content="PHP: Hypertext Preprocessor" />
+<meta name="twitter:description" content="{$meta_description}" />
+<meta name="twitter:creator" content="@official_php" />
+<meta name="twitter:image:src" content="{$meta_image_path}" />
+
+<meta itemprop="name" content="PHP: Hypertext Preprocessor" />
+<meta itemprop="description" content="$meta_description" />
+<meta itemprop="image" content="{$meta_image_path}" />
+
+<meta property="og:image" content="{$meta_image_path}" />
+<meta property="og:description" content="$meta_description" />
+
+<link href="https://fosstodon.org/@php" rel="me" />
+META
     ];
 
     $config = array_merge($defaults, $config);
 
     $config["headsup"] = get_news_changes();
 
-    $lang = language_convert($config["lang"]);
+    $lang = (new Languages())->convert($config["lang"]);
     $curr = $config["current"];
     $classes = $config['classes'];
 
@@ -457,6 +483,37 @@ function site_header(string $title = 'Hypertext Preprocessor', array $config = [
 function site_footer(array $config = []): void
 {
     require __DIR__ . "/footer.inc";
+}
+
+function get_nav_items(): array {
+  return [
+    new NavItem(
+      name: 'Downloads',
+      href: '/downloads.php',
+      id: 'downloads',
+    ),
+    new NavItem(
+      name: 'Documentation',
+      href: '/docs.php',
+      id: 'docs',
+    ),
+    new NavItem(
+      name: 'Get Involved',
+      href: '/get-involved.php',
+      id: 'community',
+    ),
+    new NavItem(
+      name: 'Help',
+      href: '/support.php',
+      id: 'help',
+    ),
+    new NavItem(
+      name: 'PHP 8.4',
+      href: '/releases/8.4/index.php',
+      id: 'php8',
+      image: '/images/php8/logo_php8_4.svg',
+    )
+  ];
 }
 
 function get_news_changes()

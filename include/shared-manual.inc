@@ -22,8 +22,7 @@ $PGI = []; $SIDEBAR_DATA = '';
 // User note display functions
 // =============================================================================
 
-require_once __DIR__ . '/../src/autoload.php';
-
+use phpweb\I18n\Languages;
 use phpweb\UserNotes\Sorter;
 use phpweb\UserNotes\UserNote;
 
@@ -33,6 +32,8 @@ use phpweb\UserNotes\UserNote;
  * @param array<string, UserNote> $notes
  */
 function manual_notes($notes):void {
+    global $LANG;
+
     // Get needed values
     list($filename) = $GLOBALS['PGI']['this'];
 
@@ -44,13 +45,16 @@ function manual_notes($notes):void {
     $sorter = new Sorter();
     $sorter->sort($notes);
 
+    $repo = strtolower($LANG);
+    $addNote = autogen('add_a_note', $LANG);
     // Link target to add a note to the current manual page,
     // and it's extended form with a [+] image
     $addnotelink = '/manual/add-note.php?sect=' . $filename .
+                   '&amp;repo=' . $repo .
                    '&amp;redirect=' . $_SERVER['BASE_HREF'];
     $addnotesnippet = make_link(
         $addnotelink,
-        "＋<small>add a note</small>",
+        "＋<small>$addNote</small>",
     );
 
     $num_notes = count($notes);
@@ -59,17 +63,19 @@ function manual_notes($notes):void {
         $noteCountHtml = "<span class=\"count\">$num_notes note" . ($num_notes == 1 ? '' : 's') . "</span>";
     }
 
+    $userContributedNotes = autogen('user_contributed_notes', $LANG);
     echo <<<END_USERNOTE_HEADER
 <section id="usernotes">
  <div class="head">
   <span class="action">{$addnotesnippet}</span>
-  <h3 class="title">User Contributed Notes {$noteCountHtml}</h3>
+  <h3 class="title">$userContributedNotes {$noteCountHtml}</h3>
  </div>
 END_USERNOTE_HEADER;
 
     // If we have no notes, then inform the user
     if ($num_notes === 0) {
-        echo "\n <div class=\"note\">There are no user contributed notes for this page.</div>";
+        $noUserContributedNotes = autogen('no_user_notes', $LANG);
+        echo "\n <div class=\"note\">$noUserContributedNotes</div>";
     } else {
         // If we have notes, print them out
         echo '<div id="allnotes">';
@@ -266,7 +272,6 @@ function manual_navigation_methodname($methodname) {
 // including HTTP header information
 function manual_setup($setup): void {
     global $PGI, $MYSITE, $USERNOTES;
-    global $ACTIVE_ONLINE_LANGUAGES;
 
     //TODO: get rid of this hack to get the related items into manual_footer
     global $__RELATED;
@@ -276,7 +281,7 @@ function manual_setup($setup): void {
     }
     $PGI = $setup;
     // Set base href for this manual page
-    $base = 'manual/' . language_convert($setup['head'][1]) . "/";
+    $base = 'manual/' . (new Languages())->convert($setup['head'][1]) . "/";
     $_SERVER['BASE_PAGE'] = $base . $setup['this'][0];
     $_SERVER['BASE_HREF'] = $MYSITE . $_SERVER['BASE_PAGE'];
 
@@ -308,7 +313,7 @@ function manual_setup($setup): void {
     $config = [
         "current" => "docs",
         "breadcrumbs" => $breadcrumbs,
-        "languages" => array_keys($ACTIVE_ONLINE_LANGUAGES),
+        "languages" => array_keys(Languages::ACTIVE_ONLINE_LANGUAGES),
         "meta-navigation" => [
             "contents" => $base . $setup["home"][0],
             "index" => $base . $setup["up"][0],
@@ -335,12 +340,12 @@ PAGE_TOOLS;
 }
 
 function manual_language_chooser($currentlang, $currentpage) {
-    global $ACTIVE_ONLINE_LANGUAGES;
+    global $LANG;
 
     // Prepare the form with all the options
     $othersel = ' selected="selected"';
     $out = [];
-    foreach ($ACTIVE_ONLINE_LANGUAGES as $lang => $text) {
+    foreach (Languages::ACTIVE_ONLINE_LANGUAGES as $lang => $text) {
         $selected = '';
         if ($lang == $currentlang) {
             $selected = ' selected="selected"';
@@ -351,10 +356,11 @@ function manual_language_chooser($currentlang, $currentpage) {
     $out[] = "<option value='help-translate.php'{$othersel}>Other</option>";
     $format_options = implode("\n" . str_repeat('  ', 6), $out);
 
+    $changeLanguage = autogen('change_language', $LANG);
     $r = <<<CHANGE_LANG
       <form action="/manual/change.php" method="get" id="changelang" name="changelang">
         <fieldset>
-          <label for="changelang-langs">Change language:</label>
+          <label for="changelang-langs">$changeLanguage:</label>
           <select onchange="document.changelang.submit()" name="page" id="changelang-langs">
             {$format_options}
           </select>
@@ -365,7 +371,7 @@ CHANGE_LANG;
 }
 
 function manual_footer($setup): void {
-    global $USERNOTES, $__RELATED;
+    global $USERNOTES, $__RELATED, $LANG;
 
     $id = substr($setup['this'][0], 0, -4);
     $repo = strtolower($setup["head"][1]); // pt_BR etc.
@@ -394,18 +400,23 @@ function manual_footer($setup): void {
         $contributors = '<a href="?contributors">All contributors.</a>';
     }
 
+    $improveThisPage = autogen('improve_this_page', $LANG);
+    $howToImproveThisPage = autogen('how_to_improve_this_page', $LANG);
+    $contributionGuidlinesOnGithub = autogen('contribution_guidlines_on_github', $LANG);
+    $submitPullRequest = autogen('submit_a_pull_request', $LANG);
+    $reportBug = autogen('report_a_bug', $LANG);
     echo <<<CONTRIBUTE
     <div class="contribute">
-      <h3 class="title">Improve This Page</h3>
+      <h3 class="title">$improveThisPage</h3>
       <div>
         $lastUpdate $contributors
       </div>
       <div class="edit-bug">
-        <a href="https://github.com/php/doc-base/blob/master/README.md" title="This will take you to our contribution guidelines on GitHub." target="_blank" rel="noopener noreferrer">Learn How To Improve This Page</a>
+        <a href="https://github.com/php/doc-base/blob/master/README.md" title="$contributionGuidlinesOnGithub" target="_blank" rel="noopener noreferrer">$howToImproveThisPage</a>
         •
-        <a href="{$edit_url}">Submit a Pull Request</a>
+        <a href="{$edit_url}">$submitPullRequest</a>
         •
-        <a href="https://github.com/php/doc-{$repo}/issues/new?body=From%20manual%20page:%20https:%2F%2Fphp.net%2F$id%0A%0A---">Report a Bug</a>
+        <a href="https://github.com/php/doc-{$repo}/issues/new?body=From%20manual%20page:%20https:%2F%2Fphp.net%2F$id%0A%0A---">$reportBug</a>
       </div>
     </div>
 CONTRIBUTE;
@@ -459,4 +470,37 @@ function contributors($setup) {
 CONTRIBUTORS;
     manual_footer($setup);
     exit;
+}
+
+function autogen(string $text, string $lang) {
+    static $translations = [];
+
+    $lang = ($lang === "") ? "en" : $lang;
+    $lang = strtolower($lang);
+    if (isset($translations[$lang])) {
+        if (isset($translations[$lang][$text]) && $translations[$lang][$text] !== "") {
+            return $translations[$lang][$text];
+        }
+        if ($lang !== "en") {
+            // fall back to English if text is not defined for the given language
+            return autogen($text, "en");
+        }
+        // we didn't find the English text either
+        throw new \InvalidArgumentException("Cannot autogenerate text for '$text'");
+    }
+
+    $translationFile = __DIR__ . \DIRECTORY_SEPARATOR . "ui_translation" . \DIRECTORY_SEPARATOR . $lang . ".ini";
+
+    if (!\file_exists($translationFile)) {
+        if ($lang !== "en") {
+            // fall back to English if translation file is not found
+            return autogen($text, "en");
+        }
+        // we didn't find the English file either
+        throw new \Exception("Cannot find translation files");
+    }
+
+    $translations[$lang] = \parse_ini_file($translationFile);
+
+    return autogen($text, $lang);
 }
