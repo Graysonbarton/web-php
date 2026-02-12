@@ -20,15 +20,15 @@ $RELEASES = (function () {
 
     /* PHP 8.5 Release */
     $data['8.5'] = [
-        'version' => '8.5.2',
-        'date' => '15 Jan 2026',
+        'version' => '8.5.3',
+        'date' => '12 Feb 2026',
         'tags' => [], // Set to ['security'] for security releases.
         'sha256' => [
             // WARNING: Order of SHA256 entries here is DIFFERENT from the
             // order in the manifest
-            'tar.gz' => '379ccccefcc85f28286444cf01bc0db017c79d513417267f5bb1d804b8428c22',
-            'tar.bz2' => 'f7efdeccc3a810b18920692306536b99a3ba86610dbd0795a296cf77d3fb3a06',
-            'tar.xz' => 'cb75a9b00a2806f7390dd64858ef42a47b443b3475769c8af6af33a18b1381f1',
+            'tar.gz' => '402654d99b4beda602d4daec4f1cd39aafdacf5923e3e947da87392826660146',
+            'tar.bz2' => 'fc5ecabc183ceb64d9fca3dcd387bd29b2b67448326af998fde003124916823b',
+            'tar.xz' => 'ce65725b8af07356b69a6046d21487040b11f2acfde786de38b2bfb712c36eb9',
         ]
     ];
 
