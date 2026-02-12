@@ -675,6 +675,71 @@ changelog_header(8, $MINOR_VERSIONS);
 
 <a id="PHP_8_4"></a>
 
+<section class="version" id="8.4.18"><!-- {{{ 8.4.18 -->
+<h3>Version 8.4.18</h3>
+<b><?php release_date('12-Feb-2026'); ?></b>
+<ul><li>Core:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20837); ?> (NULL dereference when calling ob_start() in shutdown function triggered by bailout in php_output_lock_error()).</li>
+  <li>Fix OSS-Fuzz #471533782 (Infinite loop in GC destructor fiber).</li>
+  <li>Fix OSS-Fuzz #472563272 (Borked block_pass JMP[N]Z optimization).</li>
+  <li>Fixed bug GH-<?php githubissuel('php/php-src', 20914); ?> (Internal enums can be cloned and compared).</li>
+  <li>Fix OSS-Fuzz #474613951 (Leaked parent property default value).</li>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20766); ?> (Use-after-free in FE_FREE with GC interaction).</li>
+  <li>Fix OSS-Fuzz #471486164 (Broken by-ref assignment to uninitialized hooked backing value).</li>
+  <li>Fix OSS-Fuzz #438780145 (Nested finally with repeated return type check may uaf).</li>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20905); ?> (Lazy proxy bailing __clone assertion).</li>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20479); ?> (Hooked object properties overflow).</li>
+</ul></li>
+<li>Date:
+<ul>
+  <li>Update timelib to 2022.16.</li>
+</ul></li>
+<li>DOM:
+<ul>
+  <li>Fixed <?php githubissuel('php/php-src', 21041); ?> (Dom\HTMLDocument corrupts closing tags within scripts).</li>
+</ul></li>
+<li>MbString:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20833); ?> (mb_str_pad() divide by zero if padding string is invalid in the encoding).</li>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20836); ?> (Stack overflow in mb_convert_variables with recursive array references).</li>
+</ul></li>
+<li>Opcache:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20818); ?> (Segfault in Tracing JIT with object reference).</li>
+</ul></li>
+<li>OpenSSL:
+<ul>
+  <li>Fix memory leaks when sk_X509_new_null() fails.</li>
+  <li>Fix crash when in openssl_x509_parse() when i2s_ASN1_INTEGER() fails.</li>
+  <li>Fix crash in openssl_x509_parse() when X509_NAME_oneline() fails.</li>
+</ul></li>
+<li>Phar:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20882); ?> (buildFromIterator breaks with missing base directory).</li>
+</ul></li>
+<li>PGSQL:
+<ul>
+  <li>Fixed INSERT/UPDATE queries building with PQescapeIdentifier() and possible UB.</li>
+</ul></li>
+<li>Readline:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 18139); ?> (Memory leak when overriding some settings via readline_info()).</li>
+</ul></li>
+<li>SPL:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20856); ?> (heap-use-after-free in SplDoublyLinkedList iterator when modifying during iteration).</li>
+</ul></li>
+<li>Standard:
+<ul>
+  <li><?php bugfix(74357); ?> (lchown fails to change ownership of symlink with ZTS) (Jakub Zelenka)</li>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20843); ?> (var_dump() crash with nested objects) (David Carlier)</li>
+</ul></li>
+</ul>
+<!-- }}} --></section>
+
+
+
 <section class="version" id="8.4.17"><!-- {{{ 8.4.17 -->
 <h3>Version 8.4.17</h3>
 <b><?php release_date('15-Jan-2026'); ?></b>
