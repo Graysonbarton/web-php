@@ -1030,6 +1030,80 @@ changelog_header(8, $MINOR_VERSIONS);
 
 <a id="PHP_8_4"></a>
 
+<section class="version" id="8.4.23"><!-- {{{ 8.4.23 -->
+<h3>Version 8.4.23</h3>
+<b><?php release_date('03-Jul-2026'); ?></b>
+<ul><li>Core:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 22280); ?> (Incorrect compile error for goto to label preceding try/finally block).</li>
+</ul></li>
+<li>BCMath:
+<ul>
+  <li>Fixed issues with oversized allocations and signed overflow in bcround() and BcMath\Number::round().</li>
+</ul></li>
+<li>Date:
+<ul>
+  <li>Fix incorrect recurrence check of DatePeriod::createFromISO8601String().</li>
+</ul></li>
+<li>DOM:
+<ul>
+  <li>Fix <?php githubissuel('php/php-src', 22219); ?> (Dom\XMLDocument::schemaValidate fails to resolve xs:QName with prefix from imported schema).</li>
+</ul></li>
+<li>Exif:
+<ul>
+  <li>Read correct value for single and double tags.</li>
+</ul></li>
+<li>GD:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 22121); ?> (Double free in gdImageSetStyle() after overflow-triggered early return).</li>
+  <li>Fixed bug <?php githubissuel('php/php-src', 19666); ?> (imageconvolution() unexpected nan filter value).</li>
+  <li>Fixed bug <?php githubissuel('php/php-src', 19739); ?> (imageellipse/imagefilledellipse overflow).</li>
+  <li>Fixed bug <?php githubissuel('php/php-src', 19730); ?> (imageaffine overflow).</li>
+</ul></li>
+<li>Intl:
+<ul>
+  <li>Fix incorrect argument positions for uninitialized calendar arguments in IntlCalendar::equals(), ::before(), ::after(), and ::isEquivalentTo(), and for invalid start/end arguments in transliterator_transliterate().</li>
+  <li>Fixed IntlTimeZone::getDisplayName() to synchronize object error state for invalid display types.</li>
+  <li>Fixed Spoofchecker restriction-level APIs to only be exposed with ICU 53 and later.</li>
+</ul></li>
+<li>mysqli:
+<ul>
+  <li>Fix stmt-&gt;query leak in mysqli_execute_query() validation errors.</li>
+</ul></li>
+<li>Opcache:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 20469); ?> (Unsafe inheritance cache replay with reentrant autoloading).</li>
+</ul></li>
+<li>OpenSSL:
+<ul>
+  <li>Fixed bug <?php githubissuel('php/php-src', 22187); ?> (Memory corruption (zend_mm_heap corrupted) in openssl_encrypt with AES-WRAP-PAD).</li>
+</ul></li>
+<li>Phar:
+<ul>
+  <li>Fixed a bypass of the magic ".phar" directory protection in Phar::addEmptyDir() for paths starting with "/.phar", while allowing non-magic directory names that merely share the ".phar" prefix.</li>
+</ul></li>
+<li>Reflection:
+<ul>
+  <li>Preserve class-name case in ReflectionClass::getProperty() error messages and autoloading.</li>
+</ul></li>
+<li>Sqlite:
+<ul>
+  <li>Fix error checks for column retrieval.</li>
+</ul></li>
+<li>Zlib:
+<ul>
+  <li>Fixed memory leak if deflate initialization fails and there is a dict.</li>
+  <li>Fixed memory leak in inflate_add().</li>
+</ul></li>
+<li>Zip:
+<ul>
+  <li>Fixed error-related memory leaks.</li>
+</ul></li>
+</ul>
+<!-- }}} --></section>
+
+
+
 <section class="version" id="8.4.22"><!-- {{{ 8.4.22 -->
 <h3>Version 8.4.22</h3>
 <b><?php release_date('04-Jun-2026'); ?></b>
