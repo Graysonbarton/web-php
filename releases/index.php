@@ -75,6 +75,7 @@ if (isset($_GET["serialize"]) || isset($_GET["json"])) {
 site_header("Releases", [
     'current' => 'downloads',
     'css' => '/styles/releases.css',
+    'cache_control' => 60 * 60, // 60 minutes
 ]);
 
 echo "<h1>Unsupported Historical Releases</h1>\n\n";
