@@ -456,6 +456,7 @@ function site_header(?string $title = NULL, array $config = []): void
         'classes' => '',
         'layout_span' => 9,
         "cache" => false,
+        'cache_control' => false,
         "headsup" => "",
         'meta_tags' => <<<META
 <meta name="Description" content="{$meta_description}" />
